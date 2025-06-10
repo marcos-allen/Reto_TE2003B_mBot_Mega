@@ -11,7 +11,7 @@ def redondeo(n):
 	b = round(a)
 	c = b*5
 	return (c)
-
+#Comunicación serial
 ser = serial.Serial('/dev/ttyUSB0', 57600, timeout=1)
 ser.reset_input_buffer()
 
@@ -23,8 +23,6 @@ while True:
 		print(linea)
 		if (linea == "1"):
 			print("se esta ejecutando la raspberry: imagen")
-#for i in range(40):
-#for i in range(13):/home/eduar/Descargas/SoC/Reto/projects/jpg
 			#cap = cv2.imread(f'/home/eduar/Descargas/SoC/Reto/projects/jpg/{i}.jpg')
 			ret, frame = cap.read()
 			alpha = 1 #contraste
@@ -38,14 +36,16 @@ while True:
 			plt.imshow(img_canny, cmap='gray')
 			#cv2.imshow('Video', img_canny)
 			img_canny.shape
-
+			
+			#Selección de la ROI
 			vertices = np.array([[(0,450),(0, 100), (400, 100), (400,450)]], dtype=np.int32)	
 			img_roi = np.zeros_like(img_grey)
 			cv2.fillPoly(img_roi, vertices, 255)
 			img_mask = cv2.bitwise_and(img_canny, img_roi)
 			plt.imshow(img_mask, cmap='gray')
 			cv2.imshow('Video', img_mask)
-
+			
+			#HOUGH_TRANSFORMATION
 			rho = 2			# resolución de rho en pixeles
 			theta = np.pi/180  # resolución de theta en radianes
 			threshold = 40	 # mínimo número de votos para ser considerado una línea
@@ -97,7 +97,7 @@ while True:
 				else: #derecha
 					gamma = deg_prom - 90
 					g = round(gamma)
-					if (g < 10):
+					if (g < 11):
 						mov = "000"
 					else:
 						mov = "+" + str(g)
@@ -110,13 +110,11 @@ while True:
 						mov = "+" + str(g)
 					else:
 						mov = "-" + str(g)
-			
+
+			#Envia el angulo
 			ser.write(str(mov).encode())
-			#line = ser.readline().decode('utf-8').rstrip()
 			print(f"se envio {mov}")
-			"""
-			img_canny.shape
-			"""
+			
 			if cv2.waitKey(1) == 13:
 				break
 
